@@ -13,6 +13,7 @@ import { AnalyticsView } from './components/AnalyticsView';
 import { HistoryView } from './components/HistoryView';
 import { SkeletonCard } from './components/SkeletonCard';
 import { RealtimeToast } from './components/RealtimeToast';
+import { RealApkModal } from './components/RealApkModal';
 import { realtimeSyncService, RemoteSyncEvent } from './services/realtimeSyncService';
 import { isToday } from './lib/dateUtils';
 import { Plus, Search, Layers, X } from 'lucide-react';
@@ -44,6 +45,7 @@ export default function App() {
 
   // Direct APK Download Feedback Toast
   const [downloadToast, setDownloadToast] = useState<string | null>(null);
+  const [isRealApkModalOpen, setIsRealApkModalOpen] = useState(false);
 
   // Real-time Remote Notification Event (Toast)
   const [remoteEvent, setRemoteEvent] = useState<RemoteSyncEvent | null>(null);
@@ -265,19 +267,22 @@ export default function App() {
     setSyncState(res.syncState);
   };
 
-  // Direct 1-Click APK Download (No guides, no text, no modals)
+  // Direct 1-Click APK Download: if custom URL set, directly open/download; otherwise open APK setup modal
   const handleDownloadApkDirectly = () => {
-    const link = document.createElement('a');
-    link.href = '/TaskFlow-Pro.apk';
-    link.setAttribute('download', 'TaskFlow-Pro.apk');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    setDownloadToast('📥 TaskFlow-Pro.apk डाउनलोड हो रहा है...');
-    setTimeout(() => {
-      setDownloadToast(null);
-    }, 3500);
+    const savedUrl = localStorage.getItem('taskflow_custom_apk_download_url');
+    if (savedUrl) {
+      const link = document.createElement('a');
+      link.href = savedUrl;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setDownloadToast('📥 असली APK डाउनलोड शुरू हो रहा है...');
+      setTimeout(() => setDownloadToast(null), 3500);
+    } else {
+      setIsRealApkModalOpen(true);
+    }
   };
 
   // Completed items specifically for History tab
@@ -576,6 +581,11 @@ export default function App() {
         isOpen={!!sharingTodo}
         onClose={() => setSharingTodo(null)}
         todo={sharingTodo}
+      />
+
+      <RealApkModal
+        isOpen={isRealApkModalOpen}
+        onClose={() => setIsRealApkModalOpen(false)}
       />
 
     </div>

@@ -1,5 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">TaskFlow Pro</string>
-    <string name="notification_channel_name">TaskFlow Updates</string>
-    <string name="notification_channel_desc">Notifications for task completion, updates, and creation across devices</string>
+    <string name="title_activity_main">TaskFlow Pro</string>
+    <string name="package_name">com.taskflow.app</string>
+    <string name="custom_url_scheme">com.taskflow.app</string>
 </resources>
